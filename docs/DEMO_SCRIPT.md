@@ -172,3 +172,4 @@ During live tunnel testing, the prompt:
 
 **Presenter Note for Examiners**: 
 > *"This discrepancy highlights a core finding of our ESE report: data sanitization during fine-tuning creates an inductive bias that steers models away from common destructive commands, but pattern-matching filters alone have edge cases. This empirically justifies why an execution sandbox is essential alongside static guardrails."*
+

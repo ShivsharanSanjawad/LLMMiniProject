@@ -171,3 +171,4 @@ To guarantee that the service is truly accessible over the public internet and n
 | **`cloudflared: command not found`** | Binary not in system PATH. | Run using full path `~/.local/bin/cloudflared` or copy to `.venv/bin/cloudflared`. |
 | **ICMP proxy / socket warning in tunnel logs** | Cloudflare attempting to enable raw ICMP ping without root capabilities. | Harmless warning. The HTTP proxy and QUIC edge connection function normally without it. |
 | **GPU Out of Memory on startup** | Leftover zombie Python process holding VRAM. | Run `fuser -v /dev/nvidia*` and `kill -9 <PID>` to clear leaked memory before restarting. |
+
