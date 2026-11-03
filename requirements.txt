@@ -1,0 +1,11 @@
+torch==2.6.0
+transformers==5.22.1
+peft==0.21.2
+accelerate==1.15.0
+bashlex==0.18
+fastapi==0.162.0
+uvicorn==0.54.0
+pydantic==2.14.2
+numpy==2.5.4
+requests==2.34.2
+

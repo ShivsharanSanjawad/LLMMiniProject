@@ -11,6 +11,8 @@ __pycache__/
 *.pyc
 .venv/
 tunnel_url.local.txt
+modal_url.local.txt
+.modal.toml
 *.local.*
 *.local
 tunnel_output.log

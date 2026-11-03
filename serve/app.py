@@ -71,10 +71,13 @@ def load_model():
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    dtype = torch.float16 if torch.cuda.is_available() else torch.float32
+
     base = AutoModelForCausalLM.from_pretrained(
         MODEL_ID,
-        device_map="cuda",
-        torch_dtype=torch.float16
+        device_map=device,
+        torch_dtype=dtype
     )
     if ADAPTER_PATH.exists():
         model = PeftModel.from_pretrained(base, str(ADAPTER_PATH))
@@ -103,7 +106,7 @@ def generate(req: GenerateRequest):
     ]
 
     prompt_text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-    inputs = tokenizer(prompt_text, return_tensors="pt").to("cuda")
+    inputs = tokenizer(prompt_text, return_tensors="pt").to(model.device)
     prompt_len = inputs.input_ids.shape[1]
 
     t0 = time.perf_counter()

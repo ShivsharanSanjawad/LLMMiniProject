@@ -1,0 +1,20 @@
+{
+  "url": "https://shivsharansanjawad--nl2shell-fastapi-app.us-east.modal.run",
+  "cold_start_s": 21.38,
+  "warm_samples": 10,
+  "warm_mean_ms": 1357.31,
+  "warm_median_ms": 1319.93,
+  "warm_p95_ms": 1688.2,
+  "samples_ms": [
+    1204.0,
+    1218.77,
+    1157.92,
+    1215.0,
+    1235.35,
+    1688.2,
+    1476.69,
+    1561.43,
+    1404.52,
+    1411.2
+  ]
+}
