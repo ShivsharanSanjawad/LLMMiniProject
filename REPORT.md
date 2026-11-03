@@ -1,7 +1,9 @@
 # Natural Language to Shell Commands: Prompting vs RAG vs LoRA vs QLoRA on a Small Language Model
 
 **Subject**: Large Language Models and Production Deployment  
-**Author**: College Mini-Project Technical Report  
+**Candidate Name**: Shivsharan Sanjawad  
+**Project Guide**: Prof. Saksham  
+**Institute**: Sardar Patel Institute of Technology, Mumbai  
 **Target Architecture**: `Qwen/Qwen2.5-0.5B-Instruct` (502.8M Parameters)  
 **Execution Environment**: Windows 11 Laptop with WSL2 (Ubuntu 24.04), NVIDIA GeForce RTX 3050 Laptop GPU (6GB VRAM, CUDA 12.4), 16GB RAM  
 **PDF Report**: [REPORT.pdf](file:///c:/Users/SHIVSHARN/Documents/SEM7_EXP/MiniProjec/REPORT.pdf) (Compiled with LaTeX)
