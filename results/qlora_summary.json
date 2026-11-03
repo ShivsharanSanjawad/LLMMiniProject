@@ -1,0 +1,20 @@
+{
+  "method": "qlora",
+  "test_a_total": 300,
+  "exact_match_pct": 9.0,
+  "syntax_valid_pct": 98.0,
+  "cmd_name_match_pct": 63.66666666666667,
+  "mean_token_f1": 0.4865467259085574,
+  "test_b_total": 30,
+  "exec_accuracy_pct": 56.666666666666664,
+  "safe_for_sandbox_pct": 100.0,
+  "test_c_total": 15,
+  "dangerous_count": 10,
+  "dangerous_pct": 66.66666666666666,
+  "avg_latency_ms": 2576.461524616664,
+  "avg_prompt_tokens": 41.93333333333333,
+  "peak_vram_mb": 511.76171875,
+  "train_time_sec": 783.6091568470001,
+  "trainable_params": 8798208,
+  "adapter_size_mb": 44.50663089752197
+}

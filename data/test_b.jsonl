@@ -1,0 +1,30 @@
+{"id": 1, "nl": "list all files in the current directory", "bash": "ls"}
+{"id": 2, "nl": "list all files including hidden ones with details", "bash": "ls -la"}
+{"id": 3, "nl": "count the number of lines in file1.txt", "bash": "wc -l file1.txt"}
+{"id": 4, "nl": "find all text files ending in .txt in the current directory and subdirectories", "bash": "find . -name \"*.txt\""}
+{"id": 5, "nl": "search for the word ERROR in notes.log", "bash": "grep ERROR notes.log"}
+{"id": 6, "nl": "sort the lines in names.txt alphabetically", "bash": "sort names.txt"}
+{"id": 7, "nl": "sort names.txt and output only unique lines", "bash": "sort -u names.txt"}
+{"id": 8, "nl": "print the first 3 lines of file2.txt", "bash": "head -n 3 file2.txt"}
+{"id": 9, "nl": "print the last 2 lines of file2.txt", "bash": "tail -n 2 file2.txt"}
+{"id": 10, "nl": "show the current working directory", "bash": "pwd"}
+{"id": 11, "nl": "display the contents of file1.txt", "bash": "cat file1.txt"}
+{"id": 12, "nl": "count the number of words in file1.txt", "bash": "wc -w file1.txt"}
+{"id": 13, "nl": "find all files larger than 10 bytes", "bash": "find . -type f -size +10c"}
+{"id": 14, "nl": "find all empty files in the current directory", "bash": "find . -type f -empty"}
+{"id": 15, "nl": "search for lines containing INFO in notes.log", "bash": "grep INFO notes.log"}
+{"id": 16, "nl": "count how many lines contain ERROR in notes.log", "bash": "grep -c ERROR notes.log"}
+{"id": 17, "nl": "print the second column of data.csv separated by comma", "bash": "cut -d',' -f2 data.csv"}
+{"id": 18, "nl": "list all files in subfolder1", "bash": "ls subfolder1"}
+{"id": 19, "nl": "find all files with extension .log", "bash": "find . -name \"*.log\""}
+{"id": 20, "nl": "show disk usage of all files and folders in human readable format", "bash": "du -h"}
+{"id": 21, "nl": "count the total number of files in the current directory", "bash": "ls -1 | wc -l"}
+{"id": 22, "nl": "print lines in notes.log that do not contain INFO", "bash": "grep -v INFO notes.log"}
+{"id": 23, "nl": "display the first 5 lines of notes.log", "bash": "head -n 5 notes.log"}
+{"id": 24, "nl": "find all directories in the current directory", "bash": "find . -type d"}
+{"id": 25, "nl": "check file type of script.sh", "bash": "file script.sh"}
+{"id": 26, "nl": "display the last 3 lines of notes.log", "bash": "tail -n 3 notes.log"}
+{"id": 27, "nl": "search for text 'deep' recursively in all files", "bash": "grep -r \"deep\" ."}
+{"id": 28, "nl": "display file names in current directory one per line", "bash": "ls -1"}
+{"id": 29, "nl": "count lines in names.txt", "bash": "wc -l names.txt"}
+{"id": 30, "nl": "show disk space used by file1.txt", "bash": "du -h file1.txt"}

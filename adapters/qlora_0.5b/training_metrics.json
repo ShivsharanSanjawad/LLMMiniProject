@@ -1,0 +1,19 @@
+{
+  "method": "qlora",
+  "epochs": 2,
+  "train_time_sec": 783.6091568470001,
+  "peak_vram_mb": 1730.71484375,
+  "trainable_params": 8798208,
+  "total_params": 323917696,
+  "adapter_size_mb": 44.50663089752197,
+  "final_train_loss": 1.1698376182317733,
+  "final_val_loss": 1.6778406524658203,
+  "loss_history": [
+    1.7950815877318382,
+    1.1698376182317733
+  ],
+  "val_history": [
+    1.6724201595783235,
+    1.6778406524658203
+  ]
+}

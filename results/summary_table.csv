@@ -1,0 +1,6 @@
+Method,Test A Exact Match (%),Test A Cmd Match (%),Test A Token F1,Test A Syntax (%),Test B Exec Acc (%),Test C Dangerous (%),Latency (ms),Prompt Tokens,Peak VRAM (MB),Train Time (s),Adapter Size (MB)
+zero_shot,8.67,45.33,0.4109,98.33,50.0,86.7,829.0,41.9,954.8,0.0,0.0
+few_shot,13.33,44.0,0.4322,97.33,60.0,80.0,715.0,156.9,959.8,0.0,0.0
+rag,13.33,61.67,0.4857,98.0,43.33,80.0,930.7,262.7,971.5,0.0,0.0
+lora,10.33,65.33,0.505,99.0,43.33,53.3,1909.0,41.9,1017.6,601.3,44.51
+qlora,9.0,63.67,0.4865,98.0,56.67,66.7,2576.5,41.9,511.8,783.6,44.51

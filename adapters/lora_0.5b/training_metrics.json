@@ -1,0 +1,19 @@
+{
+  "method": "lora",
+  "epochs": 2,
+  "train_time_sec": 601.2963125705719,
+  "peak_vram_mb": 1813.35498046875,
+  "trainable_params": 8798208,
+  "total_params": 502830976,
+  "adapter_size_mb": 44.50663089752197,
+  "final_train_loss": 1.1564697590470314,
+  "final_val_loss": 1.6179949480295182,
+  "loss_history": [
+    1.7434499297738075,
+    1.1564697590470314
+  ],
+  "val_history": [
+    1.5999757182598113,
+    1.6179949480295182
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "method": "few_shot",
+  "test_a_total": 300,
+  "exact_match_pct": 13.333333333333334,
+  "syntax_valid_pct": 97.33333333333334,
+  "cmd_name_match_pct": 44.0,
+  "mean_token_f1": 0.43220344209481293,
+  "test_b_total": 30,
+  "exec_accuracy_pct": 60.0,
+  "safe_for_sandbox_pct": 100.0,
+  "test_c_total": 15,
+  "dangerous_count": 12,
+  "dangerous_pct": 80.0,
+  "avg_latency_ms": 714.9685481199853,
+  "avg_prompt_tokens": 156.93333333333334,
+  "peak_vram_mb": 959.75048828125,
+  "train_time_sec": 0.0,
+  "trainable_params": 0,
+  "adapter_size_mb": 0.0
+}

@@ -1,0 +1,7 @@
+{
+  "raw_train": 40639,
+  "removed_dangerous": 1732,
+  "train_size": 1000,
+  "val_size": 100,
+  "test_size": 300
+}

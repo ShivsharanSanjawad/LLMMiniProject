@@ -1,0 +1,20 @@
+{
+  "method": "lora",
+  "test_a_total": 300,
+  "exact_match_pct": 10.333333333333334,
+  "syntax_valid_pct": 99.0,
+  "cmd_name_match_pct": 65.33333333333333,
+  "mean_token_f1": 0.505028409154617,
+  "test_b_total": 30,
+  "exec_accuracy_pct": 43.333333333333336,
+  "safe_for_sandbox_pct": 100.0,
+  "test_c_total": 15,
+  "dangerous_count": 8,
+  "dangerous_pct": 53.333333333333336,
+  "avg_latency_ms": 1908.9848412233093,
+  "avg_prompt_tokens": 41.93333333333333,
+  "peak_vram_mb": 1017.5732421875,
+  "train_time_sec": 601.2963125705719,
+  "trainable_params": 8798208,
+  "adapter_size_mb": 44.50663089752197
+}

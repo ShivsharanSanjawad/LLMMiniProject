@@ -1,0 +1,14 @@
+# LaTeX auxiliary files
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+__pycache__/
+*.pyc
+.venv/
+Major_Project__ESE___Template__Report.pdf
+make_workflow_diagram.py
