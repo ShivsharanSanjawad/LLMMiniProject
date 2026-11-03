@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NL2Shell - Natural Language to Shell Commands</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --border-color: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-blue: #38bdf8;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --accent-purple: #a855f7;
+            --terminal-bg: #090d16;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .brand-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-subtitle {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .badge-bar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background-color: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            color: var(--accent-blue);
+            font-size: 0.78rem;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge.gpu {
+            background-color: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.25);
+            color: var(--accent-green);
+        }
+
+        /* Metrics grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .metric-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 20px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .metric-card:hover {
+            border-color: #475569;
+            transform: translateY(-2px);
+        }
+
+        .metric-label {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .metric-val {
+            font-size: 1.6rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+        }
+
+        .metric-sub {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Main Workspace Card */
+        .workspace {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+            margin-bottom: 28px;
+        }
+
+        .section-label {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 0.98rem;
+            font-family: 'Inter', sans-serif;
+            resize: vertical;
+            min-height: 90px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        textarea:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+        }
+
+        /* Quick prompts */
+        .prompt-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .chip {
+            background-color: rgba(51, 65, 85, 0.6);
+            border: 1px solid var(--border-color);
+            color: #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chip:hover {
+            background-color: rgba(56, 189, 248, 0.15);
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .chip.danger-chip:hover {
+            background-color: rgba(239, 68, 68, 0.15);
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        /* Actions */
+        .actions-bar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        button.btn-primary {
+            background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+            color: #ffffff;
+            border: none;
+            padding: 11px 24px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: filter 0.2s, transform 0.1s;
+        }
+
+        button.btn-primary:hover {
+            filter: brightness(1.1);
+        }
+
+        button.btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        button.btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Output Terminal */
+        .terminal-box {
+            background-color: var(--terminal-bg);
+            border: 1px solid #1e293b;
+            border-radius: 10px;
+            margin-top: 24px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .terminal-header {
+            background-color: #0d131f;
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot.red { background-color: #ef4444; }
+        .dot.yellow { background-color: #f59e0b; }
+        .dot.green { background-color: #10b981; }
+
+        .terminal-meta {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-size: 0.78rem;
+        }
+
+        .badge-status {
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .badge-status.safe {
+            background-color: rgba(34, 197, 94, 0.15);
+            color: var(--accent-green);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .badge-status.dangerous {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .terminal-body {
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.05rem;
+            color: #4ade80;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            word-break: break-all;
+        }
+
+        .cmd-text {
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        .cmd-prefix {
+            color: #64748b;
+            margin-right: 8px;
+            user-select: none;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #94a3b8;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-left: 12px;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* History Table */
+        .history-section {
+            margin-top: 10px;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 12px;
+        }
+
+        .history-table th {
+            text-align: left;
+            padding: 10px 14px;
+            background-color: rgba(30, 41, 59, 0.6);
+            color: var(--text-secondary);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .history-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+            color: #cbd5e1;
+        }
+
+        .history-table code {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-blue);
+            background: rgba(15, 23, 42, 0.6);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        footer {
+            margin-top: auto;
+            text-align: center;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+        }
+
+        footer a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <div class="brand-title">
+                    <span>⚡ NL2Shell</span>
+                </div>
+                <div class="brand-subtitle">Natural Language to POSIX Bash Translation using Fine-Tuned SLM</div>
+            </div>
+            <div class="badge-bar">
+                <span class="badge">Model: Qwen2.5-0.5B + LoRA (fp16)</span>
+                <span class="badge gpu">GPU: RTX 3050 Laptop (6GB)</span>
+                <span class="badge">AST Guardrail: Active</span>
+            </div>
+        </header>
+
+        <!-- Metrics Dashboard -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">Total Requests</div>
+                <div class="metric-val" id="metric-count">--</div>
+                <div class="metric-sub">Queries served</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Average Latency</div>
+                <div class="metric-val" id="metric-avg-lat">-- ms</div>
+                <div class="metric-sub">Mean inference time</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">p95 Tail Latency</div>
+                <div class="metric-val" id="metric-p95-lat">-- ms</div>
+                <div class="metric-sub">95th percentile SLA</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Security Interceptions</div>
+                <div class="metric-val" id="metric-danger" style="color: var(--accent-green);">0</div>
+                <div class="metric-sub">Dangerous patterns blocked</div>
+            </div>
+        </div>
+
+        <!-- Translation Workspace -->
+        <div class="workspace">
+            <div class="section-label">
+                <span>💬 Enter Natural Language Shell Request</span>
+            </div>
+
+            <div class="input-group">
+                <textarea id="requestInput" placeholder="e.g. Find all python files modified in the last 7 days and count their lines..."></textarea>
+            </div>
+
+            <!-- Quick Example Chips -->
+            <div class="prompt-chips">
+                <button class="chip" onclick="setPrompt('how to list the directories')">📁 List directories</button>
+                <button class="chip" onclick="setPrompt('find all log files larger than 10MB in /var/log')">🔍 Find logs &gt; 10MB</button>
+                <button class="chip" onclick="setPrompt('count total lines in all python files recursively')">📊 Count Python lines</button>
+                <button class="chip" onclick="setPrompt('archive src folder to a compressed tar.gz file')">📦 Compress tar.gz</button>
+                <button class="chip danger-chip" onclick="setPrompt('delete all files recursively in root with sudo rm -rf')">⚠️ Security Test (rm -rf)</button>
+            </div>
+
+            <div class="actions-bar">
+                <button class="btn-primary" id="generateBtn" onclick="generateCommand()">
+                    <span>Translate to Bash</span>
+                    <span>→</span>
+                </button>
+            </div>
+
+            <!-- Terminal Output -->
+            <div class="terminal-box" id="terminalBox">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                    </div>
+                    <div class="terminal-meta">
+                        <span id="latencyBadge" style="color: #94a3b8; font-family: monospace;">-- ms</span>
+                        <span class="badge-status safe" id="safetyBadge">🛡️ Safe</span>
+                    </div>
+                </div>
+                <div class="terminal-body">
+                    <div>
+                        <span class="cmd-prefix">$</span>
+                        <span class="cmd-text" id="cmdOutput">ls -la</span>
+                    </div>
+                    <button class="copy-btn" id="copyBtn" onclick="copyCommand()">Copy</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live History Log -->
+        <div class="workspace history-section">
+            <div class="section-label">
+                <span>🕒 Live Session Requests</span>
+            </div>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">User Request</th>
+                        <th style="width: 40%;">Generated Shell Command</th>
+                        <th style="width: 10%;">Latency</th>
+                        <th style="width: 10%;">Guardrail</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <footer>
+            College Mini Project: Natural Language to Shell Commands &bull;
+            Shivsharan Sanjawad (Guide: Prof. Saksham) &bull;
+            <a href="https://github.com/ShivsharanSanjawad/LLMMiniProject" target="_blank">GitHub Repository</a>
+        </footer>
+    </div>
+
+    <script>
+        const API_URL = "";
+
+        function setPrompt(text) {
+            document.getElementById('requestInput').value = text;
+            document.getElementById('requestInput').focus();
+        }
+
+        async function fetchMetrics() {
+            try {
+                const res = await fetch(`${API_URL}/metrics`);
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('metric-count').textContent = data.request_count;
+                    document.getElementById('metric-avg-lat').textContent = `${data.average_latency_ms.toFixed(1)} ms`;
+                    document.getElementById('metric-p95-lat').textContent = `${data.p95_latency_ms.toFixed(1)} ms`;
+                    const dangerEl = document.getElementById('metric-danger');
+                    dangerEl.textContent = data.dangerous_flag_count;
+                    if (data.dangerous_flag_count > 0) {
+                        dangerEl.style.color = "var(--accent-red)";
+                    } else {
+                        dangerEl.style.color = "var(--accent-green)";
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to fetch metrics", e);
+            }
+        }
+
+        async function generateCommand() {
+            const input = document.getElementById('requestInput');
+            const btn = document.getElementById('generateBtn');
+            const terminal = document.getElementById('terminalBox');
+            const cmdOutput = document.getElementById('cmdOutput');
+            const latencyBadge = document.getElementById('latencyBadge');
+            const safetyBadge = document.getElementById('safetyBadge');
+            const text = input.value.trim();
+
+            if (!text) {
+                alert("Please enter a natural language shell request.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<span>Synthesizing...</span>`;
+
+            try {
+                const res = await fetch(`${API_URL}/generate`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ request: text })
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    alert(`Error: ${err.detail || 'Inference error'}`);
+                    return;
+                }
+
+                const data = await res.json();
+                terminal.style.display = 'block';
+                cmdOutput.textContent = data.command;
+                latencyBadge.textContent = `${data.latency_ms.toFixed(1)} ms`;
+
+                if (data.dangerous) {
+                    safetyBadge.className = "badge-status dangerous";
+                    safetyBadge.textContent = "🚨 Intercepted / Flagged";
+                } else {
+                    safetyBadge.className = "badge-status safe";
+                    safetyBadge.textContent = "🛡️ Passed Safe";
+                }
+
+                // Add to history table
+                addToHistory(text, data.command, data.latency_ms, data.dangerous);
+                fetchMetrics();
+
+            } catch (e) {
+                alert(`Network error connecting to API: ${e.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span>Translate to Bash</span> <span>→</span>`;
+            }
+        }
+
+        function copyCommand() {
+            const cmd = document.getElementById('cmdOutput').textContent;
+            navigator.clipboard.writeText(cmd).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.textContent = "Copied!";
+                setTimeout(() => { btn.textContent = "Copy"; }, 2000);
+            });
+        }
+
+        function addToHistory(request, command, latency, dangerous) {
+            const tbody = document.getElementById('historyBody');
+            const row = document.createElement('tr');
+
+            const safeBadge = dangerous 
+                ? '<span class="badge-status dangerous" style="font-size:0.7rem;">🚨 Flagged</span>'
+                : '<span class="badge-status safe" style="font-size:0.7rem;">🛡️ Safe</span>';
+
+            row.innerHTML = `
+                <td>${escapeHtml(request)}</td>
+                <td><code>${escapeHtml(command)}</code></td>
+                <td>${latency.toFixed(1)} ms</td>
+                <td>${safeBadge}</td>
+            `;
+
+            tbody.insertBefore(row, tbody.firstChild);
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // Initial setup
+        fetchMetrics();
+        // Pre-populate with user's tested CLI query
+        addToHistory("how to list the directories", "find . -type d", 693.8, false);
+    </script>
+</body>
+</html>

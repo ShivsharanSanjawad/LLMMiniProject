@@ -8,6 +8,7 @@ from typing import Optional
 import torch
 import numpy as np
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from peft import PeftModel
@@ -16,6 +17,7 @@ BASE_DIR = Path("/home/shivsharan/nl2shell-project")
 LOGS_DIR = BASE_DIR / "logs"
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
 REQ_LOG_FILE = LOGS_DIR / "requests.jsonl"
+INDEX_HTML = BASE_DIR / "serve" / "index.html"
 
 MODEL_ID = "Qwen/Qwen2.5-0.5B-Instruct"
 ADAPTER_PATH = BASE_DIR / "adapters" / "lora_0.5b"
@@ -50,6 +52,13 @@ def clean_command(cmd: str) -> str:
     return " ".join(cmd.split())
 
 app = FastAPI(title="NL2Shell API", description="Translate Natural Language to Bash Commands using Fine-Tuned SLM")
+
+@app.get("/", response_class=HTMLResponse)
+def get_ui():
+    if INDEX_HTML.exists():
+        with open(INDEX_HTML, "r", encoding="utf-8") as f:
+            return f.read()
+    return "<h1>NL2Shell API</h1><p>Visit <a href='/docs'>/docs</a></p>"
 
 tokenizer = None
 model = None

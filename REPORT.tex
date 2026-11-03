@@ -196,6 +196,32 @@ To protect host environments, all model outputs are validated through a two-tier
     \item \textbf{Operational Telemetry (\texttt{GET /metrics})}: Computes request count, rolling average latency, 95th percentile latency ($p_{95}$), and total dangerous command interception count.
 \end{itemize}
 
+\subsection{6. User Interfaces: Interactive Terminal CLI and Web Application}
+To validate usability for system operators and developers, two client interfaces were implemented:
+\begin{enumerate}
+    \item \textbf{Interactive Terminal CLI (\texttt{serve/cli.py})}: A command-line client enabling interactive natural language querying with real-time latency readout, colored syntax output, and visual safety badges (Figure~\ref{fig:cli_demo}).
+    \item \textbf{Web Application Dashboard (\texttt{serve/index.html})}: A modern web frontend served directly by FastAPI at \texttt{http://localhost:8000/}, featuring instant query chips, copy-to-clipboard functionality, dynamic execution history, and live operational telemetry cards powered by the \texttt{/metrics} endpoint (Figure~\ref{fig:web_dashboard}).
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/cli_demo_screenshot.png}
+        \caption{Live Interactive Terminal CLI session.}
+        \label{fig:cli_demo}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/web_ui_dashboard.png}
+        \caption{Full-stack Web UI and telemetry dashboard.}
+        \label{fig:web_dashboard}
+    \end{subfigure}
+    \caption{Deployed User Interfaces for Real-Time Natural Language to Shell Translation.}
+    \label{fig:interfaces}
+\end{figure}
+
 % =========================================================================
 % 6. RESULTS AND OBSERVATIONS
 % =========================================================================
