@@ -84,7 +84,12 @@ This End Semester Examination (ESE) project presents a rigorous, empirical inves
     \item \textbf{Quantized Low-Rank Adaptation (QLoRA, 4-bit NF4)} (4-bit NormalFloat base quantization with double quantization)
 \end{enumerate}
 
-The methodologies are evaluated across three extensive testing batteries: \textbf{Test A} (300 benchmark tasks from NL2SH-ALFA measuring exact match, command-name match, token F1, and syntax validity via \texttt{bashlex}); \textbf{Test B} (30 grounded execution tasks in an isolated multi-file sandbox comparing stdout and exit codes); and \textbf{Test C} (15 safety stress tasks assessing vulnerability to destructive command generation).
+The methodologies are evaluated across three comprehensive assessment dimensions:
+\begin{itemize}
+    \item \textbf{Benchmark Lexical Evaluation}: 300 benchmark tasks from the NL2SH-ALFA dataset measuring exact string match, command-name match, token-level F1, and AST syntax parsing via \texttt{bashlex}.
+    \item \textbf{Functional Sandbox Execution}: 30 grounded system administration tasks executed inside an isolated multi-file filesystem sandbox comparing execution stdout and process return codes.
+    \item \textbf{Security \& Destructive Risk Assessment}: 15 adversarial stress requests evaluating model susceptibility to emitting catastrophic commands (\texttt{rm -rf /}, \texttt{mkfs}, partition erasure, fork bombs).
+\end{itemize}
 
 Our experimental results demonstrate that \textbf{LoRA (fp16)} achieves the highest semantic and syntactic quality, leading all methods with a Command Name Match of \textbf{65.33\%} and a Token F1 of \textbf{0.5050}, while maintaining a minimal prompt footprint of \textbf{41.9 tokens}. \textbf{QLoRA (4-bit)} slashes peak inference VRAM by \textbf{49.7\%} (511.8\,MB vs.\ 1017.6\,MB), establishing an exceptional memory profile for ultra-low-resource hardware, at the cost of a $34.9\%$ latency increase due to runtime dequantization. Furthermore, excising 1,732 destructive commands from the training data substantially suppressed hazardous generation in the fine-tuned model (reducing dangerous outputs from 86.7\% down to 53.3\%). Finally, the optimal model is deployed via a production-ready FastAPI service with Abstract Syntax Tree (AST) security screening, asynchronous logging, and real-time p95 latency telemetry.
 
@@ -116,9 +121,9 @@ The primary objectives of this work are:
     \item \textbf{Implementation of 5 Adaptation Paradigms}: Develop and standardize Zero-Shot, Few-Shot, dynamic RAG (MiniLM + FAISS), LoRA (fp16), and QLoRA (4-bit NF4) on \texttt{Qwen2.5-0.5B-Instruct}.
     \item \textbf{Multi-Faceted Evaluation Suite}:
     \begin{itemize}
-        \item \textbf{Test A}: 300 test tasks evaluated on Exact Match, Command Name Match, Token F1, and AST syntax parsing with \texttt{bashlex}.
-        \item \textbf{Test B}: 30 grounded execution tasks evaluated inside an isolated multi-file sandbox comparing stdout and exit codes.
-        \item \textbf{Test C}: 15 adversarial safety prompts to evaluate resistance to destructive commands.
+        \item \textbf{Benchmark Evaluation}: 300 test tasks evaluated on Exact Match, Command Name Match, Token F1, and AST syntax parsing with \texttt{bashlex}.
+        \item \textbf{Functional Execution}: 30 grounded execution tasks evaluated inside an isolated multi-file sandbox comparing stdout and exit codes.
+        \item \textbf{Security Stress Assessment}: 15 adversarial safety prompts to evaluate resistance to destructive commands.
     \end{itemize}
     \item \textbf{Production Serving \& Telemetry}: Deploy the best model via a production FastAPI application with real-time request logging, rolling p95 latency tracking, and an interactive CLI demo.
 \end{enumerate}
@@ -197,34 +202,43 @@ To protect host environments, all model outputs are validated through a two-tier
 \chapter{Results and Observations}
 
 \section{Quantitative Benchmark Summary}
-Table~\ref{tab:complete_benchmark} provides the complete empirical comparison across all five evaluated methods on the eleven measured metrics.
+Table~\ref{tab:complete_benchmark} provides the complete empirical comparison across all five evaluated methods on the eleven measured metrics. The evaluation is categorized into three distinct dimensions:
+\begin{itemize}
+    \item \textbf{Standardized Benchmark (300 NL2SH-ALFA Tasks)}: Evaluating string exact match, command name match, token-level F1, and AST syntax parsing.
+    \item \textbf{Functional Sandbox Execution (30 Tasks)}: Verifying operational stdout and exit code equivalence inside an isolated sandbox directory.
+    \item \textbf{Security Stress Assessment (15 Tasks)}: Testing vulnerability to destructive command generation under adversarial requests.
+\end{itemize}
 
 \begin{table}[H]
 \centering
-\small
+\footnotesize
 \caption{Empirical Benchmark across Five Adaptation Paradigms on Qwen2.5-0.5B-Instruct}
 \label{tab:complete_benchmark}
-\begin{tabularx}{\textwidth}{lrrrrr}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}Xrrrrr}
 \toprule
-\textbf{Metric} & \textbf{Zero-Shot} & \textbf{Few-Shot} & \textbf{RAG} & \textbf{LoRA (fp16)} & \textbf{QLoRA (4-bit)} \\
+\textbf{Evaluation Dimension \& Metric} & \textbf{Zero-Shot} & \textbf{Few-Shot} & \textbf{RAG} & \textbf{LoRA (fp16)} & \textbf{QLoRA (4-bit)} \\
 \midrule
-\textbf{Test A: Exact Match (\%)}       & 8.67\%   & \textbf{13.33\%} & \textbf{13.33\%} & 10.33\%  & 9.00\%   \\
-\textbf{Test A: Command Match (\%)}     & 45.33\%  & 44.00\%          & 61.67\%          & \textbf{65.33\%} & 63.67\%  \\
-\textbf{Test A: Token F1}               & 0.4109   & 0.4322           & 0.4857           & \textbf{0.5050}  & 0.4865   \\
-\textbf{Test A: Syntax Validity (\%)}   & 98.33\%  & 97.33\%          & 98.00\%          & \textbf{99.00\%} & 98.00\%  \\
+\multicolumn{6}{l}{\textbf{1. Standard Benchmark (NL2SH-ALFA, 300 Tasks)}} \\
+Exact String Match (\%)                 & 8.67\%   & \textbf{13.33\%} & \textbf{13.33\%} & 10.33\%  & 9.00\%   \\
+Command Name Match (\%)                 & 45.33\%  & 44.00\%          & 61.67\%          & \textbf{65.33\%} & 63.67\%  \\
+Token-Level F1 Score                    & 0.4109   & 0.4322           & 0.4857           & \textbf{0.5050}  & 0.4865   \\
+AST Syntax Validity (\%)                & 98.33\%  & 97.33\%          & 98.00\%          & \textbf{99.00\%} & 98.00\%  \\
 \midrule
-\textbf{Test B: Execution Accuracy (\%)}& 50.00\%  & \textbf{60.00\%} & 43.33\%          & 43.33\%  & 56.67\%  \\
-\textbf{Test B: Sandbox Safe Rate (\%)} & 100.0\%  & 100.0\%          & 96.67\%          & 100.0\%  & 100.0\%  \\
+\multicolumn{6}{l}{\textbf{2. Functional Sandbox Execution (30 Grounded Tasks)}} \\
+Execution Output Equivalence (\%)       & 50.00\%  & \textbf{60.00\%} & 43.33\%          & 43.33\%  & 56.67\%  \\
+Sandbox Safety Compliance Rate (\%)     & 100.0\%  & 100.0\%          & 96.67\%          & 100.0\%  & 100.0\%  \\
 \midrule
-\textbf{Test C: Dangerous Outputs}      & 13 / 15  & 12 / 15          & 12 / 15          & \textbf{8 / 15}  & 10 / 15  \\
-\textbf{Test C: Dangerous Rate (\%)}    & 86.7\%   & 80.0\%           & 80.0\%           & \textbf{53.3\%}  & 66.7\%   \\
+\multicolumn{6}{l}{\textbf{3. Security \& Destructive Stress Test (15 Adversarial Tasks)}} \\
+Hazardous Commands Generated            & 13 / 15  & 12 / 15          & 12 / 15          & \textbf{8 / 15}  & 10 / 15  \\
+Vulnerability / Danger Rate (\%)        & 86.7\%   & 80.0\%           & 80.0\%           & \textbf{53.3\%}  & 66.7\%   \\
 \midrule
-\textbf{Inference Latency (ms)}         & 829.0 ms & \textbf{715.0 ms}& 930.7 ms         & 1909.0 ms& 2576.5 ms\\
-\textbf{Average Prompt Tokens}          & \textbf{41.9} & 156.9       & 262.7            & \textbf{41.9} & \textbf{41.9} \\
-\textbf{Inference Peak VRAM (MB)}       & 954.8 MB & 959.8 MB         & 971.5 MB         & 1017.6 MB& \textbf{511.8 MB} \\
-\textbf{Training Duration (s)}          & 0.0 s    & 0.0 s            & 0.0 s            & \textbf{601.3 s} & 783.6 s  \\
-\textbf{Trainable Parameters}           & 0 (0\%)  & 0 (0\%)          & 0 (0\%)          & 8,798,208 (1.75\%) & 8,798,208 (2.72\%) \\
-\textbf{Adapter Size on Disk}           & 0.00 MB  & 0.00 MB          & 0.00 MB          & 44.51 MB & 44.51 MB \\
+\multicolumn{6}{l}{\textbf{4. Resource Footprint \& Operational Metrics}} \\
+Average Inference Latency (ms)          & 829.0 ms & \textbf{715.0 ms}& 930.7 ms         & 1909.0 ms& 2576.5 ms\\
+Average Prompt Tokens                   & \textbf{41.9} & 156.9       & 262.7            & \textbf{41.9} & \textbf{41.9} \\
+Peak GPU VRAM Footprint (MB)            & 954.8 MB & 959.8 MB         & 971.5 MB         & 1017.6 MB& \textbf{511.8 MB} \\
+Fine-Tuning Duration (s)                & 0.0 s    & 0.0 s            & 0.0 s            & \textbf{601.3 s} & 783.6 s  \\
+Trainable Parameters                    & 0 (0\%)  & 0 (0\%)          & 0 (0\%)          & 8,798,208 (1.75\%) & 8,798,208 (2.72\%) \\
+Adapter Disk Size (MB)                  & 0.00 MB  & 0.00 MB          & 0.00 MB          & 44.51 MB & 44.51 MB \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -232,12 +246,12 @@ Table~\ref{tab:complete_benchmark} provides the complete empirical comparison ac
 \section{Visualizations and Comparative Charts}
 
 \subsection{Translation Accuracy: Exact Match vs.\ Sandbox Execution}
-Figure~\ref{fig:accuracy_comparison} shows the comparison between normalized exact match on Test A (300 tasks) and execution equivalence on Test B (30 sandbox tasks).
+Figure~\ref{fig:accuracy_comparison} shows the comparison between normalized exact match on the benchmark (300 tasks) and execution equivalence inside the grounded filesystem sandbox (30 tasks).
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.88\textwidth]{figures/accuracy_comparison.png}
-    \caption{Translation Accuracy: Test A (Exact Match) vs.\ Test B (Sandbox Execution Accuracy).}
+    \caption{Translation Accuracy: Benchmark Exact Match vs.\ Sandbox Functional Execution Accuracy.}
     \label{fig:accuracy_comparison}
 \end{figure}
 
@@ -270,7 +284,7 @@ Figures~\ref{fig:lat_comp} and~\ref{fig:vram_comp} highlight the operational tra
     \caption{Inference Latency and Peak GPU Memory Footprint across Paradigms.}
 \end{figure}
 
-\subsection{Safety Stress Testing \& Prompt Token Efficiency}
+\subsection{Security Stress Testing \& Prompt Token Efficiency}
 Figure~\ref{fig:safe_comp} depicts the hazardous output count on 15 adversarial prompts, while Figure~\ref{fig:tok_comp} illustrates prompt token overhead.
 
 \begin{figure}[H]
@@ -286,28 +300,22 @@ Figure~\ref{fig:safe_comp} depicts the hazardous output count on 15 adversarial 
         \caption{Average prompt token footprint.}
         \label{fig:tok_comp}
     \end{subfigure}
-    \caption{Safety Benchmark Results and Prompt Token Consumption.}
+    \caption{Security Benchmark Results and Prompt Token Consumption.}
 \end{figure}
 
-\section{Analysis of Results and Trade-Offs}
+\section{Detailed Observations and Analysis}
 
-\subsection{Accuracy and Syntactic Coherence}
-\begin{itemize}
-    \item \textbf{LoRA (fp16) is the overall semantic champion}: LoRA achieved the highest Command Name Match (\textbf{65.33\%}) and the highest Token F1 (\textbf{0.5050}). It correctly identified utility names and core flags without needing example prompts.
-    \item \textbf{Few-Shot and RAG Exact Match}: Few-Shot and RAG achieved 13.33\% exact match on Test A because in-context examples provided direct structural templates for common tasks. However, RAG suffered from an average prompt token load of \textbf{262.7 tokens} ($6.3\times$ larger than LoRA).
-\end{itemize}
+\subsection{Observation 1: Fine-Tuning Dominates Utility Identification}
+LoRA achieved the highest Command Name Match (\textbf{65.33\%}) and highest Token F1 (\textbf{0.5050}). In shell translation, selecting the correct command name (e.g., choosing \texttt{find} rather than \texttt{ls}, or \texttt{du} rather than \texttt{df}) is the critical step. Zero-shot prompting frequently selected incorrect utilities ($45.33\%$). Fine-tuning explicitly aligns the internal representations with POSIX command semantics.
 
-\subsection{Edge Hardware \& Memory Optimization}
-\begin{itemize}
-    \item \textbf{QLoRA cuts VRAM by 49.7\%}: Peak VRAM during QLoRA inference was only \textbf{511.8 MB}, compared to 1017.6 MB for LoRA and 954.8 MB for Zero-Shot. This demonstrates that 4-bit NF4 quantization enables deployment on ultra-constrained edge devices with $<1$\,GB available VRAM.
-    \item \textbf{Latency Penalty of Quantization}: Due to the overhead of runtime 4-bit dequantization on consumer CUDA cores, QLoRA exhibited an average latency of \textbf{2576.5 ms}, compared to 1909.0 ms for LoRA and 829.0 ms for Zero-Shot.
-\end{itemize}
+\subsection{Observation 2: The RAG Token Inflation Dilemma}
+While dynamic RAG improved command match over zero-shot ($61.67\%$ vs.\ $45.33\%$), it required an average of \textbf{$262.7$ prompt tokens per request}---a $6.3\times$ increase over LoRA ($41.9$ tokens). This prompt bloat increases prefill latency, consumes context window budget, and inflates memory during concurrent multi-user serving.
 
-\subsection{Safety and Guardrail Insights}
-\begin{itemize}
-    \item \textbf{Vulnerability of In-Context Prompting}: Zero-Shot, Few-Shot, and RAG exhibited an \textbf{80.0\% to 86.7\% failure rate} on Test C, readily generating destructive commands (\texttt{rm -rf /}, \texttt{dd if=/dev/zero}, fork bombs).
-    \item \textbf{Safety Benefit of Training Set Sanitization}: Fine-tuning LoRA on sanitized data reduced hazardous outputs down to \textbf{53.3\%}. Excising destructive primitives from the training corpus instilled an inductive bias against generating dangerous operations.
-\end{itemize}
+\subsection{Observation 3: QLoRA Memory Advantage vs.\ Runtime Latency}
+QLoRA halved inference peak VRAM down to \textbf{$511.8$\,MB} ($49.7\%$ lower than LoRA's $1017.6$\,MB). This confirms QLoRA as the premier technique for running on devices with severe VRAM constraints ($<1$\,GB). However, because bitsandbytes 4-bit NF4 weights must undergo runtime dequantization during autoregressive token generation, QLoRA exhibited higher latency (\textbf{2576.5 ms}, compared to 1909.0 ms for LoRA and 829.0 ms for Zero-Shot).
+
+\subsection{Observation 4: Training Sanitization Mitigates Destructive Behavior}
+In the security evaluation, baseline prompting methods (Zero-Shot, Few-Shot, RAG) exhibited an $80\%$--$86.7\%$ failure rate, willingly outputting \texttt{rm -rf /}, partition wipes, and fork bombs. By contrast, LoRA reduced hazardous emissions down to \textbf{$53.3\%$}. Because the $1,000$ training examples strictly purged destructive primitives, the adapter learned an inductive bias against generating dangerous operations. Nonetheless, because $53.3\%$ remains dangerous, an external AST security guardrail is mandatory.
 
 % =========================================================================
 % 7. CONCLUSION
