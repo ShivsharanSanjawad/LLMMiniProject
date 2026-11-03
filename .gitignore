@@ -10,6 +10,10 @@
 __pycache__/
 *.pyc
 .venv/
+tunnel_url.local.txt
+*.local.*
+*.local
+tunnel_output.log
 Major_Project__ESE___Template__Report.pdf
 make_workflow_diagram.py
 
