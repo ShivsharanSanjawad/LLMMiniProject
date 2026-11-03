@@ -7,8 +7,9 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{xcolor}
+\PassOptionsToPackage{hyphens}{url}
 \usepackage{hyperref}
-\usepackage{microtype}
+\usepackage[protrusion=true,expansion=false]{microtype}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{float}
@@ -50,8 +51,13 @@
     {\Large \textbf{Sardar Patel Institute of Technology}}\\[0.2cm]
     {\normalsize (Autonomous Institute Affiliated to University of Mumbai)}\\[0.2cm]
     {\normalsize Munshi Nagar, Andheri-West, Mumbai-400058}\\[0.2cm]
-    {\normalsize University of Mumbai}\\[0.4cm]
-    {\large 2026--2027}
+    {\normalsize University of Mumbai}\\[0.3cm]
+    {\large 2026--2027}\\[0.8cm]
+    
+    \rule{0.85\textwidth}{0.5pt}\\[0.3cm]
+    {\normalsize \textbf{GitHub Repository:} \url{https://github.com/ShivsharanSanjawad/LLMMiniProject}}\\[0.2cm]
+    {\normalsize \textbf{Live Deployed Web Application:} \url{https://shivsharansanjawad--nl2shell-fastapi-app.us-east.modal.run}}\\[0.1cm]
+    \rule{0.85\textwidth}{0.5pt}
 \end{titlepage}
 
 % =========================================================================
@@ -91,10 +97,11 @@ The methodologies are evaluated across three comprehensive assessment dimensions
     \item \textbf{Security \& Destructive Risk Assessment}: 15 adversarial stress requests evaluating model susceptibility to emitting catastrophic commands (\texttt{rm -rf /}, \texttt{mkfs}, partition erasure, fork bombs).
 \end{itemize}
 
-Our experimental results demonstrate that \textbf{LoRA (fp16)} achieves the highest semantic and syntactic quality, leading all methods with a Command Name Match of \textbf{65.33\%} and a Token F1 of \textbf{0.5050}, while maintaining a minimal prompt footprint of \textbf{41.9 tokens}. \textbf{QLoRA (4-bit)} slashes peak inference VRAM by \textbf{49.7\%} (511.8\,MB vs.\ 1017.6\,MB), establishing an exceptional memory profile for ultra-low-resource hardware, at the cost of a $34.9\%$ latency increase due to runtime dequantization. Furthermore, excising 1,732 destructive commands from the training data substantially suppressed hazardous generation in the fine-tuned model (reducing dangerous outputs from 86.7\% down to 53.3\%). Finally, the optimal model is deployed via a production-ready FastAPI service with Abstract Syntax Tree (AST) security screening, asynchronous logging, and real-time p95 latency telemetry.
+Our experimental results demonstrate that \textbf{LoRA (fp16)} achieves the highest semantic and syntactic quality, leading all methods with a Command Name Match of \textbf{65.33\%} and a Token F1 of \textbf{0.5050}, while maintaining a minimal prompt footprint of \textbf{41.9 tokens}. \textbf{QLoRA (4-bit)} slashes peak inference VRAM by \textbf{49.7\%} (511.8\,MB vs.\ 1017.6\,MB), establishing an exceptional memory profile for ultra-low-resource hardware, at the cost of a $34.9\%$ latency increase due to runtime dequantization. Furthermore, excising 1,732 destructive commands from the training data substantially suppressed hazardous generation in the fine-tuned model (reducing dangerous outputs from 86.7\% down to 53.3\%). Finally, the optimal model is deployed across two production-grade environments: a local edge server with public Cloudflare edge tunneling for zero-cost demonstrations, and a permanent, serverless cloud deployment on Modal with automatic scale-to-zero capability ($scaledown\_window=60s$) and $1.35$\,s warm inference latency.
 
 \vspace{0.8cm}
-\noindent \textbf{Project GitHub Repository:} \url{https://github.com/ShivsharanSanjawad/LLMMiniProject}
+\noindent \textbf{Project GitHub Repository:} \url{https://github.com/ShivsharanSanjawad/LLMMiniProject}\\[0.2cm]
+\noindent \textbf{Live Deployed Web Application (Modal Cloud):} \url{https://shivsharansanjawad--nl2shell-fastapi-app.us-east.modal.run}
 
 % =========================================================================
 % 4. INTRODUCTION
@@ -221,6 +228,42 @@ To validate usability for system operators and developers, two client interfaces
     \caption{Deployed User Interfaces for Real-Time Natural Language to Shell Translation.}
     \label{fig:interfaces}
 \end{figure}
+
+\subsection{7. Public Ingress via Cloudflare Edge Tunnel}
+To facilitate external mobile evaluation and remote viva demonstrations without complex router port-forwarding or public IP exposure, a secure edge tunnel was established using \texttt{cloudflared} operating inside the WSL2 environment:
+\begin{itemize}
+    \item \textbf{Encrypted Transport}: Inbound web requests are routed through Cloudflare's nearest edge Anycast nodes (e.g., BOM in Mumbai) over QUIC/HTTP2 to the local FastAPI service bound to \texttt{0.0.0.0:8000}.
+    \item \textbf{Mobile Verification}: End-to-end functionality was verified over cellular 4G/5G mobile networks with local Wi-Fi disconnected, confirming public accessibility of both the Web UI and the JSON API.
+    \item \textbf{Operational Constraints}: Ephemeral quick tunnels generate a randomized subdomain on restart and require the host laptop to remain powered on with sleep disabled, establishing the requirement for a persistent cloud deployment.
+\end{itemize}
+
+\subsection{8. Permanent Serverless Cloud Deployment on Modal}
+To overcome the physical hardware dependencies of the local laptop tunnel, the complete inference service was containerized and deployed to the \textbf{Modal} serverless cloud platform (\texttt{modal\_app.py}):
+\begin{itemize}
+    \item \textbf{Container Optimization}: Built upon a slim Debian Python 3.12 image with pinned dependencies. The base model \texttt{Qwen2.5-0.5B-Instruct} is pre-cached into the image layer during build time (\texttt{run\_function}), completely eliminating model download delays during container cold starts.
+    \item \textbf{Zero-Code Duplication Architecture}: The ASGI application is exposed directly via \texttt{@modal.asgi\_app()}, reusing the identical routes, AST guardrails, and Web UI from \texttt{serve/app.py}.
+    \item \textbf{Scale-to-Zero Economics}: Idle containers automatically terminate after 60 seconds (\texttt{scaledown\_window=60}), reducing idle holding costs to \textbf{\$0.00}. The active runtime cost is approximately \$0.13 for a continuous 30-minute demonstration window.
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{Operational Comparison: Local Host vs.\ Cloudflare Tunnel vs.\ Modal Serverless Cloud}
+\label{tab:deployment_comparison}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}Xrrr}
+\toprule
+\textbf{Deployment Metric} & \textbf{Local WSL2 (RTX 3050)} & \textbf{Cloudflare Tunnel} & \textbf{Modal Serverless Cloud} \\
+\midrule
+Endpoint Persistence       & Local only (\texttt{localhost}) & Ephemeral Subdomain & \textbf{Permanent HTTPS Web URL} \\
+Cold-Start Provisioning   & 0.0 s (pre-loaded) & 0.0 s (pre-loaded) & 21.38 s (container boot) \\
+Warm Inference Latency     & 1909.0 ms & 1781.9 ms & \textbf{1357.3 ms} (Median: 1319.9 ms) \\
+Tail Latency ($p_{95}$)   & 3722.4 ms & 3906.5 ms & \textbf{1688.2 ms} \\
+External Mobile Access     & No (host internal) & Yes (while laptop awake) & \textbf{Yes (24/7 standalone)} \\
+Idle Hosting Cost          & \$0.00 & \$0.00 & \textbf{\$0.00 (Scale-to-Zero)} \\
+Estimated 30-Min Demo Cost & \$0.00 & \$0.00 & \textbf{\textasciitilde\$0.13} \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 % =========================================================================
 % 6. RESULTS AND OBSERVATIONS
@@ -354,7 +397,7 @@ In this ESE mini-project, we designed, executed, and evaluated a comprehensive c
     \item \textbf{Cleaned Data Corpus}: Processed $40,639$ raw pairs, purged $1,732$ dangerous instances, and structured balanced training ($1,000$), validation ($100$), and test sets ($300$).
     \item \textbf{Successful Fine-Tuning}: Trained both LoRA ($10.0$ min) and QLoRA ($13.1$ min) on an RTX 3050 Laptop GPU under strict VRAM constraints with zero errors.
     \item \textbf{Empirical Characterization}: Benchmarked all five paradigms across syntax, execution, safety, latency, memory, and token cost.
-    \item \textbf{Production Deployment}: Served the best adapter using FastAPI with AST safety guardrails, request logging, and telemetry metrics.
+    \item \textbf{Multi-Tier Production Deployment}: Served the best adapter using FastAPI with AST safety guardrails across two production tiers: (a) a local edge server with public Cloudflare edge tunneling for zero-cost demonstrations, and (b) a permanent, serverless cloud deployment on Modal with automatic scale-to-zero economics and $1.35$\,s warm inference latency.
 \end{enumerate}
 
 \section{Final Engineering Recommendations}

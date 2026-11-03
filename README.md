@@ -3,7 +3,8 @@
 A comprehensive benchmark comparing five adaptation methods for translating Natural Language instructions to Linux/Bash shell commands using `Qwen/Qwen2.5-0.5B-Instruct` on consumer edge hardware (NVIDIA RTX 3050 Laptop GPU, 6GB VRAM, WSL2 Ubuntu).
 
 [![Repository](https://img.shields.io/badge/GitHub-LLMMiniProject-blue?logo=github)](https://github.com/ShivsharanSanjawad/LLMMiniProject)
-[![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi)](http://localhost:8000/)
+[![Live Modal Web App](https://img.shields.io/badge/Modal-Live%20Web%20App-00D084?logo=modal)](https://shivsharansanjawad--nl2shell-fastapi-app.us-east.modal.run)
+[![FastAPI Local](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi)](http://localhost:8000/)
 [![Report](https://img.shields.io/badge/Report-PDF-red?logo=adobeacrobatreader)](REPORT.pdf)
 
 ---
@@ -137,6 +138,13 @@ PYTHONPATH=. python3 serve/cli.py "find all python files modified in the last 7 
 ```bash
 curl http://127.0.0.1:8000/metrics
 ```
+
+#### Option D: Live Cloud Deployment (Modal Serverless)
+The service is permanently deployed to the cloud via Modal with automatic scale-to-zero:
+👉 **[https://shivsharansanjawad--nl2shell-fastapi-app.us-east.modal.run](https://shivsharansanjawad--nl2shell-fastapi-app.us-east.modal.run)**
+- Interactive Web Dashboard: `https://shivsharansanjawad--nl2shell-fastapi-app.us-east.modal.run/`
+- OpenAPI Swagger Docs: `https://shivsharansanjawad--nl2shell-fastapi-app.us-east.modal.run/docs`
+- Live Health Check: `https://shivsharansanjawad--nl2shell-fastapi-app.us-east.modal.run/health`
 
 ---
 
