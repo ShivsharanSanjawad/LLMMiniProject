@@ -176,6 +176,6 @@ Evaluated on `Qwen/Qwen2.5-0.5B-Instruct` across five adaptation paradigms:
 - **Project Title**: *Natural Language to Shell Commands: Prompting vs RAG vs LoRA vs QLoRA on a Small Language Model*
 - **Candidate**: Shivsharan Sanjawad
 - **Project Guide**: Prof. Saksham
-- **Department**: Department of Information Technology, Sardar Patel Institute of Technology (SPIT), Mumbai
+- **Department**: Department of Computer Engineering, Sardar Patel Institute of Technology (SPIT), Mumbai
 - **Course Context**: Large Language Models and Production Deployment (End Semester Examination - ESE)
 - **Full Report**: [REPORT.pdf](REPORT.pdf)
